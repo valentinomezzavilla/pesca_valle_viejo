@@ -9,7 +9,10 @@ const esquema = z.object({
   DB_POOL_MAX: z.coerce.number().int().positive().default(10),
   SESSION_SECRET: z.string().min(16, 'SESSION_SECRET tiene que tener al menos 16 caracteres'),
   TRUST_PROXY: z.coerce.number().int().min(0).default(0),
-  COOKIE_SECURE: z.enum(['true', 'false']).default('false').transform((v) => v === 'true'),
+  // Acepta TRUE/True/true: algunos paneles (ej. Coolify) guardan el valor en mayúsculas
+  COOKIE_SECURE: z
+    .preprocess((v) => (typeof v === 'string' ? v.trim().toLowerCase() : v), z.enum(['true', 'false']).default('false'))
+    .transform((v) => v === 'true'),
   LOG_LEVEL: z.string().default('info'),
   ADMIN_USUARIO: z.string().default('admin'),
   ADMIN_PASSWORD: z.string().optional(),
