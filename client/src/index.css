@@ -1,0 +1,219 @@
+@import 'tailwindcss';
+
+/* Modo oscuro por clase en <html> (se elige en el menú: claro / oscuro / según el dispositivo) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================================
+   Tokens semánticos. Las pantallas usan SOLO estos nombres
+   (bg-superficie, text-texto-suave, bg-primario...), así el modo
+   oscuro y cualquier cambio de marca se hacen acá.
+   ============================================================ */
+:root {
+  --fondo: #f3f5f8;
+  --superficie: #ffffff;
+  --superficie-2: #f1f4f8;
+  --superficie-3: #e4e9f0;
+  --borde: #e2e8f0;
+  --borde-fuerte: #cbd5e1;
+  --texto: #0f1b2a;
+  --texto-suave: #556579;
+  --texto-tenue: #8b9bb0;
+
+  --primario: #0b5c8e;
+  --primario-hover: #094b74;
+  --primario-suave: #e6f0f8;
+  --primario-texto: #0a4a73;
+  --sobre-primario: #ffffff;
+
+  --exito: #0a8f5c;
+  --exito-hover: #087a4e;
+  --exito-suave: #e7f6ef;
+  --exito-texto: #06603e;
+  --sobre-exito: #ffffff;
+
+  --peligro: #d03a3a;
+  --peligro-hover: #b42f2f;
+  --peligro-suave: #fdeeee;
+  --peligro-texto: #942525;
+  --sobre-peligro: #ffffff;
+
+  --alerta: #c77700;
+  --alerta-suave: #fff5e3;
+  --alerta-texto: #844e00;
+
+  --lateral: #0a2236;
+  --lateral-hover: #13324d;
+  --lateral-texto: #b4c8da;
+  --lateral-borde: #183a57;
+
+  --anillo: rgb(11 92 142 / 0.35);
+  --sombra: 0 1px 2px rgb(15 27 42 / 0.06), 0 1px 3px rgb(15 27 42 / 0.08);
+  --sombra-alta: 0 20px 50px -12px rgb(15 27 42 / 0.35);
+}
+
+.dark {
+  --fondo: #0a141e;
+  --superficie: #101d2a;
+  --superficie-2: #162636;
+  --superficie-3: #1f3346;
+  --borde: #20364a;
+  --borde-fuerte: #2e4a63;
+  --texto: #e6eef6;
+  --texto-suave: #9db1c5;
+  --texto-tenue: #687f96;
+
+  --primario: #4aa3dd;
+  --primario-hover: #68b4e6;
+  --primario-suave: #12304a;
+  --primario-texto: #a5d4f3;
+  --sobre-primario: #04121e;
+
+  --exito: #22b07c;
+  --exito-hover: #34c38f;
+  --exito-suave: #0e3326;
+  --exito-texto: #86e2bd;
+  --sobre-exito: #03140d;
+
+  --peligro: #e45c5c;
+  --peligro-hover: #ec7474;
+  --peligro-suave: #3a191c;
+  --peligro-texto: #f6a9a9;
+  --sobre-peligro: #1a0506;
+
+  --alerta: #e5a536;
+  --alerta-suave: #362812;
+  --alerta-texto: #f3cf89;
+
+  --lateral: #07111b;
+  --lateral-hover: #11202f;
+  --lateral-texto: #94a9bd;
+  --lateral-borde: #152637;
+
+  --anillo: rgb(74 163 221 / 0.45);
+  --sombra: 0 1px 2px rgb(0 0 0 / 0.4);
+  --sombra-alta: 0 20px 50px -12px rgb(0 0 0 / 0.7);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --color-fondo: var(--fondo);
+  --color-superficie: var(--superficie);
+  --color-superficie-2: var(--superficie-2);
+  --color-superficie-3: var(--superficie-3);
+  --color-borde: var(--borde);
+  --color-borde-fuerte: var(--borde-fuerte);
+  --color-texto: var(--texto);
+  --color-texto-suave: var(--texto-suave);
+  --color-texto-tenue: var(--texto-tenue);
+
+  --color-primario: var(--primario);
+  --color-primario-hover: var(--primario-hover);
+  --color-primario-suave: var(--primario-suave);
+  --color-primario-texto: var(--primario-texto);
+  --color-sobre-primario: var(--sobre-primario);
+
+  --color-exito: var(--exito);
+  --color-exito-hover: var(--exito-hover);
+  --color-exito-suave: var(--exito-suave);
+  --color-exito-texto: var(--exito-texto);
+  --color-sobre-exito: var(--sobre-exito);
+
+  --color-peligro: var(--peligro);
+  --color-peligro-hover: var(--peligro-hover);
+  --color-peligro-suave: var(--peligro-suave);
+  --color-peligro-texto: var(--peligro-texto);
+  --color-sobre-peligro: var(--sobre-peligro);
+
+  --color-alerta: var(--alerta);
+  --color-alerta-suave: var(--alerta-suave);
+  --color-alerta-texto: var(--alerta-texto);
+
+  --color-lateral: var(--lateral);
+  --color-lateral-hover: var(--lateral-hover);
+  --color-lateral-texto: var(--lateral-texto);
+  --color-lateral-borde: var(--lateral-borde);
+
+  --color-anillo: var(--anillo);
+  --shadow-suave: var(--sombra);
+  --shadow-alta: var(--sombra-alta);
+
+  --animate-entrar: entrar 160ms ease-out;
+  --animate-subir: subir 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-fundido: fundido 160ms ease-out;
+}
+
+@keyframes entrar {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes subir {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fundido {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  body {
+    @apply bg-fondo font-sans text-texto antialiased;
+  }
+  ::selection {
+    @apply bg-primario-suave text-primario-texto;
+  }
+  :focus-visible {
+    outline: none;
+  }
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='date']::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+  }
+  .dark input[type='date']::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+/* Barra de scroll fina en paneles internos */
+.scroll-fino {
+  scrollbar-width: thin;
+  scrollbar-color: var(--borde-fuerte) transparent;
+}
+
+/* ---------- Impresión del ticket (siempre blanco y negro) ---------- */
+#area-impresion {
+  display: none;
+}
+
+@media print {
+  @page {
+    margin: 0;
+  }
+  html, body {
+    background: white !important;
+    color: black !important;
+  }
+  #root {
+    display: none !important;
+  }
+  #area-impresion {
+    display: block;
+  }
+}

@@ -1,0 +1,76 @@
+# PRODUCCIÓN (VPS). Ver docs/DEPLOY.md
+#   docker compose -f docker-compose.prod.yml up -d --build
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      TZ: America/Argentina/Cordoba
+      PGTZ: America/Argentina/Cordoba
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    logging: &logs
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '5'
+    # Sin "ports": la base NO queda expuesta a internet, solo la ve la app por la red interna.
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      DB_POOL_MAX: '10'
+      TRUST_PROXY: '1'
+      COOKIE_SECURE: 'true'
+    ports:
+      - '127.0.0.1:3000:3000' # solo Nginx (en el mismo servidor) llega a la app
+    logging: *logs
+
+  backup:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST: db
+      PGUSER: ${POSTGRES_USER}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: ${POSTGRES_DB}
+      TZ: America/Argentina/Cordoba
+      HORA_BACKUP: ${HORA_BACKUP:-03:30}
+    volumes:
+      - ./backups:/backups
+      - ./scripts/backup.sh:/usr/local/bin/backup.sh:ro
+    # Corre el backup todos los días a HORA_BACKUP (hora de Córdoba)
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo "Backups diarios a las $$HORA_BACKUP"
+        while true; do
+          if [ "$$(date +%H:%M)" = "$$HORA_BACKUP" ]; then
+            /bin/sh /usr/local/bin/backup.sh || echo "ERROR: falló el backup"
+            sleep 61
+          fi
+          sleep 20
+        done
+    logging: *logs
+
+volumes:
+  pgdata:

@@ -1,0 +1,13 @@
+{
+  "name": "@pescaderia/shared",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "dependencies": {
+    "decimal.js": "^10.6.0",
+    "zod": "^3.25.76"
+  }
+}

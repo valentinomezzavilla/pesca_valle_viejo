@@ -1,0 +1,36 @@
+{
+  "name": "@pescaderia/server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file-if-exists=../.env --watch src/server.js",
+    "start": "node --env-file-if-exists=../.env src/server.js",
+    "db:migrar": "node --env-file-if-exists=../.env src/db/cli.js migrar",
+    "db:seed": "node --env-file-if-exists=../.env src/db/cli.js seed",
+    "db:demo": "node --env-file-if-exists=../.env src/db/cli.js demo",
+    "db:local": "node scripts/pg-local.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@pescaderia/shared": "*",
+    "bcryptjs": "^3.0.2",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "express-session": "^1.18.2",
+    "helmet": "^8.1.0",
+    "knex": "^3.1.0",
+    "pdfkit": "^0.20.2",
+    "pg": "^8.16.3",
+    "pino": "^9.9.0",
+    "pino-http": "^10.5.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.9",
+    "supertest": "^7.1.4",
+    "vitest": "^5.0.4"
+  }
+}

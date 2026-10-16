@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a2236" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐟</text></svg>" />
+    <title>Pescadería — Gestión</title>
+    <script>
+      // Aplica el tema antes de pintar (evita el parpadeo claro → oscuro)
+      try {
+        var t = localStorage.getItem('pescaderia.tema') || 'sistema';
+        if (t === 'oscuro' || (t === 'sistema' && matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <div id="area-impresion"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
