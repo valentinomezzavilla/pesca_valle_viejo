@@ -14,7 +14,7 @@ import { BotonesContacto } from '../../componentes/Contacto.jsx';
 import { MovimientosCuenta, TarjetaSaldo } from '../../componentes/CuentaCorriente.jsx';
 import { Cargando, Dato, Encabezado, ErrorCarga, Etiqueta, Tabla, Tarjeta } from '../../componentes/Varios.jsx';
 import { cantidad, fecha, hoyIso, inicioMesIso, normalizarNumero, pesos } from '../../lib/formato.js';
-import { enlaceWhatsApp, textoVencimiento } from '../../lib/proveedores.js';
+import { enlaceWhatsApp, textoPlazo, textoVencimiento } from '../../lib/proveedores.js';
 import { ModalCliente } from './Clientes.jsx';
 
 const ICONOS_MEDIO = { EFECTIVO: Banknote, TRANSFERENCIA: Smartphone, TARJETA_DEBITO: CreditCard, TARJETA_CREDITO: CreditCard };
@@ -86,7 +86,7 @@ export function CuentaCliente() {
                     ? `Límite ${pesos(c.limite_credito)} · puede deber ${pesos(restante.toFixed(2))} más`
                     : `Límite ${pesos(c.limite_credito)} · se pasó por ${pesos(restante.abs().toFixed(2))}`
                   : 'Sin límite de crédito'}
-                {` · paga a ${c.plazo_pago_dias ? `${c.plazo_pago_dias} días` : 'en el día'}`}
+                {` · paga: ${textoPlazo(c.plazo_pago_dias, c.plazo_periodo).toLowerCase()}`}
               </span>
             )}
           </span>
@@ -130,7 +130,7 @@ export function CuentaCliente() {
       <Tarjeta className="mt-8" titulo="Datos del cliente" icono={UserRound} accion={<Boton variante="secundario" icono={Pencil} onClick={() => setModal('editar')}>Editar datos</Boton>}>
         <div className="space-y-3">
           <Dato etiqueta="Cuenta corriente">{c.cuenta_corriente ? 'Sí' : 'No'}</Dato>
-          <Dato etiqueta="Plazo para pagar">{c.plazo_pago_dias ? `${c.plazo_pago_dias} días` : 'En el día'}</Dato>
+          <Dato etiqueta="Plazo para pagar">{textoPlazo(c.plazo_pago_dias, c.plazo_periodo)}</Dato>
           <Dato etiqueta="Límite de crédito">{c.limite_credito !== null ? pesos(c.limite_credito) : 'Sin límite'}</Dato>
           <Dato etiqueta="DNI / CUIT">{c.documento || '—'}</Dato>
           <Dato etiqueta="Dirección">{c.direccion || '—'}</Dato>

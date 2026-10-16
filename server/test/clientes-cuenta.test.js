@@ -120,7 +120,17 @@ describe('Cuenta corriente · habilitación y venta', () => {
     expect(tel.status).toBe(200);
     const plazo = await cajero.put(`/api/clientes/${c.id}`).send({ plazo_pago_dias: 10 });
     expect(plazo.status).toBe(403);
+    const periodo = await cajero.put(`/api/clientes/${c.id}`).send({ plazo_periodo: 'SEMANA' });
+    expect(periodo.status).toBe(403);
     expect((await fiar(cajero, c.id)).status).toBe(201);
+  });
+
+  it('guarda el plazo al finalizar el período y no acepta períodos inventados', async () => {
+    const c = (await admin.post('/api/clientes').send({ nombre: 'Restaurante', cuenta_corriente: true, plazo_periodo: 'QUINCENA' })).body;
+    expect(c.plazo_periodo).toBe('QUINCENA');
+    const vuelta = await admin.put(`/api/clientes/${c.id}`).send({ plazo_periodo: '', plazo_pago_dias: 7 });
+    expect(vuelta.body).toMatchObject({ plazo_periodo: null, plazo_pago_dias: 7 });
+    expect((await admin.put(`/api/clientes/${c.id}`).send({ plazo_periodo: 'MES' })).status).toBe(400);
   });
 
   it('con la cuenta deshabilitada se le sigue cobrando lo que debe, pero no se le fía más', async () => {

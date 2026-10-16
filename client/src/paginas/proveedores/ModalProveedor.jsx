@@ -6,7 +6,7 @@ import { post, put } from '../../api/cliente.js';
 import { useDialogos } from '../../contexto/Dialogos.jsx';
 import { Boton } from '../../componentes/Boton.jsx';
 import { Modal } from '../../componentes/Modal.jsx';
-import { AreaTexto, Campo, Interruptor } from '../../componentes/Formulario.jsx';
+import { AreaTexto, Campo, CampoPlazo, Interruptor } from '../../componentes/Formulario.jsx';
 
 export function ModalProveedor({ proveedor, onCerrar }) {
   const queryClient = useQueryClient();
@@ -19,6 +19,7 @@ export function ModalProveedor({ proveedor, onCerrar }) {
     cuit: proveedor?.cuit ?? '',
     cbu_alias: proveedor?.cbu_alias ?? '',
     plazo_pago_dias: String(proveedor?.plazo_pago_dias ?? 0),
+    plazo_periodo: proveedor?.plazo_periodo ?? null,
     dias_entrega: proveedor?.dias_entrega ?? [],
     direccion: proveedor?.direccion ?? '',
     notas: proveedor?.notas ?? '',
@@ -35,7 +36,7 @@ export function ModalProveedor({ proveedor, onCerrar }) {
     setEnviando(true);
     setErrores({});
     try {
-      const datos = { ...d, plazo_pago_dias: d.plazo_pago_dias === '' ? 0 : d.plazo_pago_dias };
+      const datos = { ...d, plazo_pago_dias: d.plazo_periodo || d.plazo_pago_dias === '' ? 0 : d.plazo_pago_dias };
       if (proveedor) await put(`/proveedores/${proveedor.id}`, datos);
       else await post('/proveedores', datos);
       avisar('Proveedor guardado.');
@@ -57,8 +58,16 @@ export function ModalProveedor({ proveedor, onCerrar }) {
         <Campo etiqueta="Teléfono" icono={Phone} inputMode="tel" placeholder="Ej: 223 555-0101" value={d.telefono} onChange={(e) => set({ telefono: e.target.value })} ayuda="Con la característica, para que funcione WhatsApp" />
         <Campo etiqueta="CUIT" inputMode="numeric" placeholder="20-12345678-6" value={d.cuit} onChange={(e) => set({ cuit: e.target.value })} onBlur={revisarCuit} error={errores.cuit} />
         <Campo etiqueta="Email" type="email" value={d.email} onChange={(e) => set({ email: e.target.value })} error={errores.email} />
-        <Campo etiqueta="CBU o alias para transferirle" icono={Landmark} value={d.cbu_alias} onChange={(e) => set({ cbu_alias: e.target.value })} error={errores.cbu_alias} />
-        <Campo etiqueta="¿En cuántos días hay que pagarle?" inputMode="numeric" value={d.plazo_pago_dias} onChange={(e) => set({ plazo_pago_dias: e.target.value.replace(/\D/g, '') })} error={errores.plazo_pago_dias} ayuda="0 = se le paga en el día" />
+        <Campo className="md:col-span-2" etiqueta="CBU o alias para transferirle" icono={Landmark} value={d.cbu_alias} onChange={(e) => set({ cbu_alias: e.target.value })} error={errores.cbu_alias} />
+        <CampoPlazo
+          className="md:col-span-2"
+          etiqueta="¿Cuándo hay que pagarle?"
+          dias={d.plazo_pago_dias}
+          periodo={d.plazo_periodo}
+          onCambio={({ dias, periodo }) => set(dias !== undefined ? { plazo_pago_dias: dias } : { plazo_periodo: periodo })}
+          errores={errores}
+          ayudaDias="0 = se le paga en el día"
+        />
         <fieldset className="md:col-span-2">
           <legend className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-texto"><CalendarDays size={16} aria-hidden /> ¿Qué días entrega?</legend>
           <div className="grid grid-cols-4 gap-2 sm:grid-cols-7">

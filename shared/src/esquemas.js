@@ -7,6 +7,7 @@ import {
   MEDIOS_PAGO_PROVEEDOR,
   TIPOS_MOV_CAJA_MANUAL,
   MOTIVOS_MERMA,
+  PLAZOS_PERIODO,
 } from './constantes.js';
 import { cuitValido, normalizarCuit } from './cuit.js';
 
@@ -137,6 +138,8 @@ const zPlazoDias = z.coerce
   .min(0, 'No puede ser negativo')
   .max(365, 'Máximo 365 días')
   .optional();
+// Plazo "al finalizar el período" (manda sobre los días). Vacío = por días
+const zPlazoPeriodo = z.preprocess((v) => (v === '' ? null : v), z.enum(PLAZOS_PERIODO).nullable()).optional();
 
 const zCuit = z
   .preprocess(
@@ -159,6 +162,7 @@ export const esquemaProveedor = z.object({
   contacto: textoOpcional(100),
   cbu_alias: textoOpcional(60),
   plazo_pago_dias: zPlazoDias,
+  plazo_periodo: zPlazoPeriodo,
   dias_entrega: z.array(z.number().int().min(0).max(6)).max(7).optional(),
   notas: textoOpcional(1000),
   activo: z.boolean().optional(),
@@ -342,6 +346,7 @@ export const esquemaCliente = z.object({
   limite_credito: z.preprocess((v) => (v === '' || v === undefined ? null : v), zPesos.nullable()).optional(),
   cuenta_corriente: z.boolean().optional(),
   plazo_pago_dias: zPlazoDias,
+  plazo_periodo: zPlazoPeriodo,
   notas: textoOpcional(500),
   activo: z.boolean().optional(),
   pinAutorizacion: pinOpcional,

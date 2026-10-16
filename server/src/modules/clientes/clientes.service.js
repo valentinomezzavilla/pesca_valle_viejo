@@ -44,11 +44,12 @@ const limiteNormalizado = (v) => (v === null || v === undefined || v === '' ? nu
 
 /** ¿Estos datos tocan la cuenta corriente respecto de como está el cliente? (sin cliente = alta) */
 function cambiaLaCuenta(datos, antes = null) {
-  if (!antes) return datos.cuenta_corriente === true || limiteNormalizado(datos.limite_credito) !== null || Number(datos.plazo_pago_dias ?? 0) > 0;
+  if (!antes) return datos.cuenta_corriente === true || limiteNormalizado(datos.limite_credito) !== null || Number(datos.plazo_pago_dias ?? 0) > 0 || !!datos.plazo_periodo;
   return (
     (datos.cuenta_corriente !== undefined && datos.cuenta_corriente !== antes.cuenta_corriente) ||
     (datos.limite_credito !== undefined && limiteNormalizado(datos.limite_credito) !== limiteNormalizado(antes.limite_credito)) ||
-    (datos.plazo_pago_dias !== undefined && Number(datos.plazo_pago_dias) !== Number(antes.plazo_pago_dias))
+    (datos.plazo_pago_dias !== undefined && Number(datos.plazo_pago_dias) !== Number(antes.plazo_pago_dias)) ||
+    (datos.plazo_periodo !== undefined && (datos.plazo_periodo ?? null) !== (antes.plazo_periodo ?? null))
   );
 }
 

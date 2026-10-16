@@ -121,7 +121,7 @@ export async function panel() {
   ]);
 
   // Proveedores con algo vencido o que vence en la semana, y cheques que se cobran en la semana
-  const conDeuda = await db('proveedores as p').join('v_saldos_proveedores as s', 's.id', 'p.id').where('s.saldo', '>', 0).select('p.id', 'p.nombre', 'p.plazo_pago_dias');
+  const conDeuda = await db('proveedores as p').join('v_saldos_proveedores as s', 's.id', 'p.id').where('s.saldo', '>', 0).select('p.id', 'p.nombre', 'p.plazo_pago_dias', 'p.plazo_periodo');
   const estados = await estadoDeudas(db, conDeuda, fechaHoy);
   const enUnaSemana = sumarDias(fechaHoy, 7);
   const proveedoresAPagar = conDeuda
@@ -138,7 +138,7 @@ export async function panel() {
     .select('m.id', 'm.proveedor_id', 'p.nombre as proveedor', 'm.importe', 'm.cheque_fecha_cobro as fecha_cobro', 'm.cheque_numero as numero', 'm.cheque_banco as banco');
 
   // Clientes que deben algo vencido (los que más deben primero)
-  const clientesConDeuda = await db('clientes as c').join('v_saldos_clientes as s', 's.id', 'c.id').where('s.saldo', '>', 0).select('c.id', 'c.nombre', 'c.plazo_pago_dias');
+  const clientesConDeuda = await db('clientes as c').join('v_saldos_clientes as s', 's.id', 'c.id').where('s.saldo', '>', 0).select('c.id', 'c.nombre', 'c.plazo_pago_dias', 'c.plazo_periodo');
   const estadosClientes = await estadoDeudasClientes(db, clientesConDeuda, fechaHoy);
   const clientesVencidos = clientesConDeuda
     .map((c) => ({ id: c.id, nombre: c.nombre, vencido: estadosClientes.get(c.id).vencido }))

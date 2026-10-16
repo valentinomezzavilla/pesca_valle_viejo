@@ -21,7 +21,7 @@ export async function datosResumen(proveedorId, { desde, hasta }) {
     db('compras').where({ proveedor_id: proveedorId }).where('fecha', '<=', h).select('id', 'fecha', 'total', 'estado', 'tipo_documento', 'numero_documento'),
   ]);
   // Las compras sin pagar como estaban al cierre del período, así el PDF no se contradice con su propio saldo
-  const estado = imputar({ movimientos: hastaFecha, compras, plazoDias: proveedor.plazo_pago_dias, hoy: h });
+  const estado = imputar({ movimientos: hastaFecha, compras, plazoDias: proveedor.plazo_pago_dias, plazoPeriodo: proveedor.plazo_periodo, hoy: h });
   let saldo = dec(anterior?.total ?? 0);
   const movimientos = filas.map((m) => {
     saldo = saldo.plus(m.importe);

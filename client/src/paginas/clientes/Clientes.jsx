@@ -7,7 +7,7 @@ import { conPin, get, post, put } from '../../api/cliente.js';
 import { useDialogos } from '../../contexto/Dialogos.jsx';
 import { Boton, clasesBoton } from '../../componentes/Boton.jsx';
 import { Modal } from '../../componentes/Modal.jsx';
-import { AreaTexto, Campo, Interruptor, SelectorBotones } from '../../componentes/Formulario.jsx';
+import { AreaTexto, Campo, CampoPlazo, Interruptor, SelectorBotones } from '../../componentes/Formulario.jsx';
 import { BotonesContacto } from '../../componentes/Contacto.jsx';
 import { Cargando, Encabezado, ErrorCarga, Etiqueta, Indicador, Tabla, Vacio } from '../../componentes/Varios.jsx';
 import { normalizarNumero, pesos } from '../../lib/formato.js';
@@ -145,6 +145,7 @@ export function ModalCliente({ cliente, onCerrar, onGuardado }) {
     cuenta_corriente: cliente?.cuenta_corriente ?? false,
     limite_credito: cliente?.limite_credito ?? '',
     plazo_pago_dias: String(cliente?.plazo_pago_dias ?? 0),
+    plazo_periodo: cliente?.plazo_periodo ?? null,
     notas: cliente?.notas ?? '',
     activo: cliente?.activo ?? true,
   });
@@ -160,10 +161,11 @@ export function ModalCliente({ cliente, onCerrar, onGuardado }) {
       const datos = {
         ...d,
         limite_credito: d.limite_credito === '' ? '' : normalizarNumero(d.limite_credito),
-        plazo_pago_dias: d.plazo_pago_dias === '' ? 0 : d.plazo_pago_dias,
+        // Con período, los días no se usan
+        plazo_pago_dias: d.plazo_periodo || d.plazo_pago_dias === '' ? 0 : d.plazo_pago_dias,
       };
       // Cliente nuevo sin cuenta corriente: lo que haya quedado escrito en límite y plazo (ocultos) no se guarda
-      if (!cliente && !d.cuenta_corriente) Object.assign(datos, { limite_credito: '', plazo_pago_dias: 0 });
+      if (!cliente && !d.cuenta_corriente) Object.assign(datos, { limite_credito: '', plazo_pago_dias: 0, plazo_periodo: null });
       // Abrir o cambiar la cuenta corriente necesita el PIN del dueño si el que guarda es el cajero
       const r = await conPin(pedirPin, (pin) => {
         const conPinAutorizacion = { ...datos, pinAutorizacion: pin };
@@ -197,7 +199,7 @@ export function ModalCliente({ cliente, onCerrar, onGuardado }) {
             ayuda="Puede llevar mercadería y pagar después. Abrirla o cambiar límite y plazo necesita el PIN del dueño."
           />
           {d.cuenta_corriente && (
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-4">
               <Campo
                 etiqueta="Límite de crédito"
                 inputMode="decimal"
@@ -207,13 +209,13 @@ export function ModalCliente({ cliente, onCerrar, onGuardado }) {
                 error={errores.limite_credito}
                 ayuda="Lo máximo que puede deber. Vacío = sin límite."
               />
-              <Campo
-                etiqueta="¿En cuántos días tiene que pagar?"
-                inputMode="numeric"
-                value={d.plazo_pago_dias}
-                onChange={(e) => set({ plazo_pago_dias: e.target.value.replace(/\D/g, '') })}
-                error={errores.plazo_pago_dias}
-                ayuda="0 = en el día. Pasado ese plazo, la compra figura como vencida."
+              <CampoPlazo
+                etiqueta="¿Cuándo tiene que pagar?"
+                dias={d.plazo_pago_dias}
+                periodo={d.plazo_periodo}
+                onCambio={({ dias, periodo }) => set(dias !== undefined ? { plazo_pago_dias: dias } : { plazo_periodo: periodo })}
+                errores={errores}
+                ayudaDias="0 = en el día. Pasado ese plazo, la compra figura como vencida."
               />
             </div>
           )}

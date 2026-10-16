@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { imputar } from '../src/modules/proveedores/imputacion.js';
-import { diasEntre } from '../src/lib/fechas.js';
+import { diasEntre, fechaVencimiento } from '../src/lib/fechas.js';
 
 const compra = (id, fecha, total, extra = {}) => ({ id, fecha, total, estado: 'CONFIRMADA', tipo_documento: 'REMITO', numero_documento: String(id), ...extra });
 let n = 0;
@@ -15,8 +15,38 @@ describe('diasEntre', () => {
   });
 });
 
+describe('fechaVencimiento', () => {
+  it('por días suma el plazo', () => {
+    expect(fechaVencimiento('2026-10-14', { dias: 10 })).toBe('2026-10-24');
+    expect(fechaVencimiento('2026-10-14')).toBe('2026-10-14');
+  });
+  it('al finalizar la semana vence el domingo (de lunes a domingo)', () => {
+    expect(fechaVencimiento('2026-10-12', { periodo: 'SEMANA' })).toBe('2026-10-18'); // lunes
+    expect(fechaVencimiento('2026-10-14', { periodo: 'SEMANA', dias: 30 })).toBe('2026-10-18'); // los días no cuentan
+    expect(fechaVencimiento('2026-10-18', { periodo: 'SEMANA' })).toBe('2026-10-18'); // domingo
+    expect(fechaVencimiento('2026-12-30', { periodo: 'SEMANA' })).toBe('2027-01-03');
+  });
+  it('al finalizar la quincena vence el 15 o el último día del mes', () => {
+    expect(fechaVencimiento('2026-10-01', { periodo: 'QUINCENA' })).toBe('2026-10-15');
+    expect(fechaVencimiento('2026-10-15', { periodo: 'QUINCENA' })).toBe('2026-10-15');
+    expect(fechaVencimiento('2026-10-16', { periodo: 'QUINCENA' })).toBe('2026-10-31');
+    expect(fechaVencimiento('2026-02-20', { periodo: 'QUINCENA' })).toBe('2026-02-28');
+    expect(fechaVencimiento('2028-02-20', { periodo: 'QUINCENA' })).toBe('2028-02-29');
+    expect(fechaVencimiento('2026-11-30', { periodo: 'QUINCENA' })).toBe('2026-11-30');
+  });
+});
+
 describe('imputar', () => {
   const hoy = '2026-10-14';
+
+  it('con plazo por quincena, las compras de la quincena vencen juntas', () => {
+    const compras = [compra(1, '2026-09-20', '1000.00'), compra(2, '2026-10-02', '2000.00'), compra(3, '2026-10-10', '3000.00')];
+    const movimientos = compras.map((c) => mov('COMPRA', c.total, { compra_id: c.id }));
+    const r = imputar({ movimientos, compras, plazoDias: 0, plazoPeriodo: 'QUINCENA', hoy });
+    expect(r.compras.map((c) => [c.vence, c.estado])).toEqual([['2026-09-30', 'VENCIDA'], ['2026-10-15', 'PENDIENTE'], ['2026-10-15', 'PENDIENTE']]);
+    expect(r.vencido).toBe('1000.00');
+    expect(r.proximo_vencimiento).toEqual({ fecha: '2026-10-15', importe: '5000.00' });
+  });
 
   it('el pago cancela primero la compra más vieja y marca vencidas según el plazo', () => {
     const compras = [compra(1, '2026-09-01', '100000.00'), compra(2, '2026-10-10', '50000.00')];

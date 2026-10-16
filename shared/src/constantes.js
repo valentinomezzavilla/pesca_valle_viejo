@@ -94,3 +94,7 @@ export const LEYENDA_COMPROBANTE_INTERNO = 'Comprobante no válido como factura'
 // Índice = Date#getUTCDay() (0 = domingo). En pantalla se muestran de lunes a domingo.
 export const DIAS_SEMANA = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 export const ORDEN_DIAS_SEMANA = [1, 2, 3, 4, 5, 6, 0];
+
+// Plazo de pago "al finalizar el período": todo lo del período vence junto
+export const PLAZOS_PERIODO = ['SEMANA', 'QUINCENA'];
+export const PLAZOS_PERIODO_ETIQUETA = { SEMANA: 'Al finalizar la semana', QUINCENA: 'Al finalizar la quincena' };

@@ -12,7 +12,7 @@ import { imputarDeudas } from '../../lib/imputacion.js';
  * movimientos: { id, tipo, importe, venta_id, anula_movimiento_id, fecha, descripcion }
  * ventas: { id, fecha, estado, ticket }
  */
-export function imputarCliente({ movimientos, ventas, plazoDias = 0, hoy: hoyIso }) {
+export function imputarCliente({ movimientos, ventas, plazoDias = 0, plazoPeriodo = null, hoy: hoyIso }) {
   const anulados = new Set(movimientos.filter((m) => m.tipo === 'ANULACION_PAGO').map((m) => Number(m.anula_movimiento_id)));
   const vigentes = movimientos.filter((m) => m.tipo !== 'ANULACION_PAGO' && !anulados.has(Number(m.id)));
   const confirmadas = new Map(ventas.filter((v) => v.estado === 'CONFIRMADA').map((v) => [Number(v.id), v]));
@@ -31,7 +31,7 @@ export function imputarCliente({ movimientos, ventas, plazoDias = 0, hoy: hoyIso
     // ANULACION_VENTA: su venta está anulada y ya no figura como deuda
   }
 
-  const r = imputarDeudas({ deudas, creditos, plazoDias, hoy: hoyIso });
+  const r = imputarDeudas({ deudas, creditos, plazoDias, plazoPeriodo, hoy: hoyIso });
   return {
     saldo: aPesos(movimientos.reduce((a, m) => a.plus(m.importe), dec(0))),
     vencido: r.vencido,
@@ -61,12 +61,12 @@ export async function cargarCuentas(conexion, ids, { hasta } = {}) {
   return { movimientos: agrupar(m), ventas: agrupar(v) };
 }
 
-/** Estado de deuda de varios clientes con dos consultas. clientes: [{ id, plazo_pago_dias }] */
+/** Estado de deuda de varios clientes con dos consultas. clientes: [{ id, plazo_pago_dias, plazo_periodo }] */
 export async function estadoDeudasClientes(conexion, clientes, hoyIso = hoy()) {
   if (!clientes.length) return new Map();
   const { movimientos, ventas } = await cargarCuentas(conexion, clientes.map((c) => c.id));
   return new Map(
-    clientes.map((c) => [c.id, imputarCliente({ movimientos: movimientos.get(c.id) ?? [], ventas: ventas.get(c.id) ?? [], plazoDias: c.plazo_pago_dias, hoy: hoyIso })]),
+    clientes.map((c) => [c.id, imputarCliente({ movimientos: movimientos.get(c.id) ?? [], ventas: ventas.get(c.id) ?? [], plazoDias: c.plazo_pago_dias, plazoPeriodo: c.plazo_periodo, hoy: hoyIso })]),
   );
 }
 

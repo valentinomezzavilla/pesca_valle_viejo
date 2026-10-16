@@ -1,5 +1,5 @@
 import { aPesos, dec } from '@pescaderia/shared';
-import { diasEntre, sumarDias } from './fechas.js';
+import { diasEntre, fechaVencimiento } from './fechas.js';
 
 const menor = (a, b) => (a.lt(b) ? a : b);
 
@@ -9,8 +9,9 @@ const menor = (a, b) => (a.lt(b) ? a : b);
  *
  * deudas:   [{ clave, fecha 'YYYY-MM-DD', importe, orden?, ...extra }] — lo que se debe por cada una
  * creditos: [{ importe > 0, clave? }] — con clave va primero a esa deuda; el resto, de la deuda más vieja a la más nueva
+ * plazoPeriodo: 'SEMANA' | 'QUINCENA' | null — si está, manda sobre plazoDias
  */
-export function imputarDeudas({ deudas, creditos, plazoDias = 0, hoy }) {
+export function imputarDeudas({ deudas, creditos, plazoDias = 0, plazoPeriodo = null, hoy }) {
   const ordenadas = [...deudas].sort((a, b) => (a.fecha === b.fecha ? Number(a.orden ?? 0) - Number(b.orden ?? 0) : a.fecha < b.fecha ? -1 : 1));
   const falta = new Map(ordenadas.map((d) => [d.clave, dec(d.importe)]));
 
@@ -32,7 +33,7 @@ export function imputarDeudas({ deudas, creditos, plazoDias = 0, hoy }) {
       pendiente = pendiente.minus(aplica);
       pozo = pozo.minus(aplica);
     }
-    const vence = sumarDias(d.fecha, plazoDias);
+    const vence = fechaVencimiento(d.fecha, { dias: plazoDias, periodo: plazoPeriodo });
     const diasParaVencer = diasEntre(hoy, vence);
     let estado = 'PENDIENTE';
     if (pendiente.lte(0)) estado = 'PAGADA';

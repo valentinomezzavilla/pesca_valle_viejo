@@ -338,7 +338,7 @@ export const REPORTES = {
     ],
     async ejecutar() {
       const rows = await db('v_saldos_clientes as s').join('clientes as c', 'c.id', 's.id')
-        .whereNot('s.saldo', 0).orderBy('s.saldo', 'desc').select('s.*', 'c.plazo_pago_dias');
+        .whereNot('s.saldo', 0).orderBy('s.saldo', 'desc').select('s.*', 'c.plazo_pago_dias', 'c.plazo_periodo');
       const estados = await estadoDeudasClientes(db, rows);
       const filas = rows.map((f) => ({
         cliente: f.nombre,
@@ -368,7 +368,7 @@ export const REPORTES = {
     ],
     async ejecutar() {
       const rows = await db('v_saldos_proveedores as s').join('proveedores as p', 'p.id', 's.id')
-        .whereNot('s.saldo', 0).orderBy('s.saldo', 'desc').select('s.*', 'p.plazo_pago_dias');
+        .whereNot('s.saldo', 0).orderBy('s.saldo', 'desc').select('s.*', 'p.plazo_pago_dias', 'p.plazo_periodo');
       const estados = await estadoDeudas(db, rows);
       const filas = rows.map((f) => ({
         proveedor: f.nombre,

@@ -1,7 +1,14 @@
+import { useEffect, useRef } from 'react';
 import { Delete } from 'lucide-react';
 
+const TECLA_FISICA = { Backspace: 'borrar', Delete: 'limpiar', ',': ',', '.': ',', Decimal: ',' };
+
 // Teclado numérico grande para pantallas táctiles. Trabaja sobre un string con coma decimal.
+// También acepta el teclado físico (números, coma o punto, Borrar, Supr y Enter).
 export function TecladoNumerico({ valor, onCambio, sinDecimales = false, maxDecimales = 3, onConfirmar }) {
+  const grilla = useRef(null);
+  const ultimo = useRef();
+
   const tocar = (tecla) => {
     if (tecla === 'borrar') return onCambio(valor.slice(0, -1));
     if (tecla === 'limpiar') return onCambio('');
@@ -14,10 +21,43 @@ export function TecladoNumerico({ valor, onCambio, sinDecimales = false, maxDeci
     if (valor === '0') return onCambio(tecla);
     onCambio(valor + tecla);
   };
+  ultimo.current = { tocar, onConfirmar };
+
+  // Al abrir, el foco va al teclado (si no, queda en la X del modal y Enter lo cerraría)
+  useEffect(() => {
+    if (!grilla.current?.contains(document.activeElement)) grilla.current?.focus({ preventScroll: true });
+  }, []);
+
+  useEffect(() => {
+    const alPresionar = (e) => {
+      if (e.ctrlKey || e.metaKey || e.altKey || !grilla.current) return;
+      const activo = document.activeElement;
+      // Si están escribiendo en otro campo, no nos metemos
+      if (activo?.closest('input, textarea, select, [contenteditable="true"]')) return;
+      // Solo responde el teclado del modal que está adelante (el que tiene el foco)
+      const dialogo = grilla.current.closest('[role="dialog"]');
+      if (dialogo && !dialogo.contains(activo)) return;
+
+      const { tocar, onConfirmar } = ultimo.current;
+      if (e.key === 'Enter') {
+        // Enter sobre otro botón al que se llegó con Tab (ej. "Cancelar") hace lo de ese botón
+        if (activo?.closest('button') && !grilla.current.contains(activo) && activo.matches(':focus-visible')) return;
+        if (!onConfirmar) return;
+        e.preventDefault();
+        return onConfirmar();
+      }
+      const tecla = /^[0-9]$/.test(e.key) ? e.key : TECLA_FISICA[e.key];
+      if (!tecla) return;
+      e.preventDefault();
+      tocar(tecla);
+    };
+    document.addEventListener('keydown', alPresionar);
+    return () => document.removeEventListener('keydown', alPresionar);
+  }, []);
 
   const teclas = ['7', '8', '9', '4', '5', '6', '1', '2', '3', sinDecimales ? 'limpiar' : ',', '0', 'borrar'];
   return (
-    <div className="grid grid-cols-3 gap-2" onKeyDown={(e) => e.key === 'Enter' && onConfirmar?.()}>
+    <div ref={grilla} tabIndex={-1} className="grid grid-cols-3 gap-2 focus:outline-none">
       {teclas.map((t) => {
         const especial = t === 'borrar' || t === 'limpiar';
         return (

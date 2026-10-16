@@ -15,7 +15,7 @@ export async function estadoDeudas(conexion, proveedores, hoyIso = hoy()) {
   const movs = agrupar(movimientos);
   const comps = agrupar(compras);
   return new Map(
-    proveedores.map((p) => [p.id, imputar({ movimientos: movs.get(p.id) ?? [], compras: comps.get(p.id) ?? [], plazoDias: p.plazo_pago_dias, hoy: hoyIso })]),
+    proveedores.map((p) => [p.id, imputar({ movimientos: movs.get(p.id) ?? [], compras: comps.get(p.id) ?? [], plazoDias: p.plazo_pago_dias, plazoPeriodo: p.plazo_periodo, hoy: hoyIso })]),
   );
 }
 

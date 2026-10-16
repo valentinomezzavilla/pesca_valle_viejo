@@ -10,7 +10,7 @@ const DE_COMPRA = new Set(['COMPRA', 'ANULACION_COMPRA']);
  * (pagos, notas de crédito) se aplica a las compras de la más vieja a la más nueva.
  * Las compras anuladas y los movimientos anulados (con su anulación) no cuentan.
  */
-export function imputar({ movimientos, compras, plazoDias = 0, hoy }) {
+export function imputar({ movimientos, compras, plazoDias = 0, plazoPeriodo = null, hoy }) {
   const anulados = new Set(movimientos.filter((m) => ANULACIONES.has(m.tipo)).map((m) => Number(m.anula_movimiento_id)));
   const vigentes = movimientos.filter((m) => !ANULACIONES.has(m.tipo) && !anulados.has(Number(m.id)));
   const confirmadas = new Map(compras.filter((c) => c.estado === 'CONFIRMADA').map((c) => [Number(c.id), c]));
@@ -36,7 +36,7 @@ export function imputar({ movimientos, compras, plazoDias = 0, hoy }) {
     .filter((m) => !DE_COMPRA.has(m.tipo))
     .map((m) => ({ importe: dec(m.importe).neg(), clave: m.tipo === 'PAGO' && m.compra_id != null ? Number(m.compra_id) : null }));
 
-  const r = imputarDeudas({ deudas, creditos, plazoDias, hoy });
+  const r = imputarDeudas({ deudas, creditos, plazoDias, plazoPeriodo, hoy });
   return {
     saldo: aPesos(movimientos.reduce((a, m) => a.plus(m.importe), dec(0))),
     vencido: r.vencido,

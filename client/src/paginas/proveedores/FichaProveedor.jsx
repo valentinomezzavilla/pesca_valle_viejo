@@ -10,7 +10,7 @@ import { BotonesContacto } from '../../componentes/Contacto.jsx';
 import { MovimientosCuenta, TarjetaSaldo } from '../../componentes/CuentaCorriente.jsx';
 import { Cargando, Dato, Encabezado, ErrorCarga, Etiqueta, Tabla, Tarjeta } from '../../componentes/Varios.jsx';
 import { fecha, pesos } from '../../lib/formato.js';
-import { nombresDias, textoVencimiento } from '../../lib/proveedores.js';
+import { nombresDias, textoPlazo, textoVencimiento } from '../../lib/proveedores.js';
 import { ModalProveedor } from './ModalProveedor.jsx';
 import { ModalAnular, ModalNotaCredito, ModalPago, ModalResumen } from './ModalesCuenta.jsx';
 
@@ -159,7 +159,7 @@ export function FichaProveedor() {
               <span className="font-semibold">—</span>
             )}
           </div>
-          <Dato etiqueta="Plazo para pagarle">{p.plazo_pago_dias ? `${p.plazo_pago_dias} días` : 'Se le paga en el día'}</Dato>
+          <Dato etiqueta="Plazo para pagarle">{textoPlazo(p.plazo_pago_dias, p.plazo_periodo, 'Se le paga en el día')}</Dato>
           <Dato etiqueta="Días que entrega">{nombresDias(p.dias_entrega) || '—'}</Dato>
           <Dato etiqueta="Email">{p.email || '—'}</Dato>
           <Dato etiqueta="Dirección">{p.direccion || '—'}</Dato>

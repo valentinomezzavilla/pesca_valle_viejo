@@ -17,7 +17,7 @@ async function clienteONada(id) {
 
 async function estadoAl(cliente, fecha) {
   const { movimientos, ventas } = await cargarCuentas(db, [cliente.id], { hasta: fecha });
-  return imputarCliente({ movimientos: movimientos.get(cliente.id) ?? [], ventas: ventas.get(cliente.id) ?? [], plazoDias: cliente.plazo_pago_dias, hoy: fecha });
+  return imputarCliente({ movimientos: movimientos.get(cliente.id) ?? [], ventas: ventas.get(cliente.id) ?? [], plazoDias: cliente.plazo_pago_dias, plazoPeriodo: cliente.plazo_periodo, hoy: fecha });
 }
 
 export async function datosResumenCliente(clienteId, { desde, hasta }) {
