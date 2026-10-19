@@ -22,6 +22,7 @@ const columnasMovimientos = [
   {
     clave: 'tipo',
     titulo: 'Movimiento',
+    principal: true,
     render: (m) => (
       <span className="font-medium">
         {TIPOS_MOV_CAJA_ETIQUETA[m.tipo]}
@@ -29,7 +30,7 @@ const columnasMovimientos = [
       </span>
     ),
   },
-  { clave: 'detalle', titulo: 'Detalle', render: (m) => <span className="text-texto-suave">{[m.categoria_gasto, m.descripcion].filter(Boolean).join(' — ')}</span> },
+  { clave: 'detalle', titulo: 'Detalle', render: (m) => [m.categoria_gasto, m.descripcion].filter(Boolean).join(' — ') || null },
   { clave: 'medio', titulo: 'Medio', render: (m) => MEDIOS_PAGO_ETIQUETA[m.medio] },
   {
     clave: 'importe',

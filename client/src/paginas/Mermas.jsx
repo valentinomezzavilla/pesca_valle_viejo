@@ -52,7 +52,7 @@ export function Mermas() {
           iconoVacio={CalendarDays}
           columnas={[
             { clave: 'fecha', titulo: 'Cuándo', render: (m) => <span className="text-texto-suave">{fechaHora(m.creado_en)}</span> },
-            { clave: 'producto', titulo: 'Producto', render: (m) => <span className="font-semibold">{m.producto}</span> },
+            { clave: 'producto', titulo: 'Producto', principal: true, render: (m) => <span className="font-semibold">{m.producto}</span> },
             { clave: 'cantidad', titulo: 'Cantidad', derecha: true, render: (m) => cantidad(m.cantidad, m.unidad) },
             { clave: 'motivo', titulo: 'Motivo', render: (m) => <Etiqueta tono={m.motivo === 'VENCIDO' ? 'rojo' : 'amarillo'}>{MOTIVOS_MERMA_ETIQUETA[m.motivo]}</Etiqueta> },
             { clave: 'detalle', titulo: 'Detalle', render: (m) => <span className="text-texto-suave">{m.detalle}</span> },

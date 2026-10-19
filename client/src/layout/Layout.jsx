@@ -68,10 +68,10 @@ export function Layout() {
 
   const contenidoMenu = (
     <>
-      <div className="flex items-center gap-3 px-5 pb-4 pt-5">
+      <div className="flex items-center gap-3 pb-4 pl-5 pr-14 pt-5 lg:pr-5">
         <img src="/logo-512.png" alt="" className="size-12 shrink-0 rounded-full ring-2 ring-white/20" />
         <div className="min-w-0">
-          <div className="truncate font-bold leading-tight text-white">{nombreNegocio}</div>
+          <div className="font-bold leading-tight text-white">{nombreNegocio}</div>
           <div className="text-xs text-lateral-texto">Sistema de gestión</div>
         </div>
       </div>

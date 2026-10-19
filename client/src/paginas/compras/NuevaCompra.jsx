@@ -145,7 +145,7 @@ export function NuevaCompra() {
                   <input className={`${clasesInput} text-right tabular-nums`} inputMode="decimal" value={l.cantidad} onChange={(e) => actualizar(l.clave, { cantidad: e.target.value })} />
                 </label>
                 <div className="md:col-span-3">
-                  <div className="mb-1.5 flex gap-1" role="radiogroup" aria-label="Cómo cargar el costo">
+                  <div className="mb-1.5 grid grid-cols-2 gap-1 rounded-xl bg-superficie-2 p-1 ring-1 ring-inset ring-borde" role="radiogroup" aria-label="Cómo cargar el costo">
                     {[['unitario', `$ por ${unidad}`], ['total', '$ total']].map(([m, t]) => (
                       <button
                         key={m}
@@ -153,7 +153,7 @@ export function NuevaCompra() {
                         role="radio"
                         aria-checked={l.modoCosto === m}
                         onClick={() => actualizar(l.clave, { modoCosto: m })}
-                        className={`rounded-md px-2 py-0.5 text-sm font-semibold transition-colors ${l.modoCosto === m ? 'bg-primario text-sobre-primario' : 'text-texto-suave ring-1 ring-inset ring-borde-fuerte hover:text-texto'}`}
+                        className={`min-h-10 rounded-lg px-2 text-[15px] font-semibold transition-colors ${l.modoCosto === m ? 'bg-primario text-sobre-primario shadow-sm' : 'text-texto-suave hover:bg-superficie hover:text-texto'}`}
                       >
                         {t}
                       </button>

@@ -31,7 +31,7 @@ export function Compras() {
           iconoVacio={PackageOpen}
           columnas={[
             { clave: 'fecha', titulo: 'Fecha', render: (c) => <span className="tabular-nums text-texto-suave">{fecha(c.fecha)}</span> },
-            { clave: 'proveedor', titulo: 'Proveedor', render: (c) => <span className="font-semibold">{c.proveedor}</span> },
+            { clave: 'proveedor', titulo: 'Proveedor', principal: true, render: (c) => <span className="font-semibold">{c.proveedor}</span> },
             { clave: 'documento', titulo: 'Comprobante', render: (c) => <span>{TIPOS_DOCUMENTO_COMPRA_ETIQUETA[c.tipo_documento]} <span className="font-mono text-sm text-texto-suave">{c.numero_documento ?? ''}</span></span> },
             { clave: 'condicion', titulo: 'Pago', render: (c) => (c.condicion === 'CONTADO' ? <Etiqueta tono="verde">Pagado</Etiqueta> : <Etiqueta tono="amarillo">A cuenta</Etiqueta>) },
             { clave: 'total', titulo: 'Total', derecha: true, render: (c) => <strong className={c.estado === 'ANULADA' ? 'text-texto-tenue line-through' : ''}>{pesos(c.total)}</strong> },

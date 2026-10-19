@@ -114,11 +114,81 @@ export function Etiqueta({ tono = 'gris', icono: Icono, children }) {
   );
 }
 
-// Tabla responsive: scroll horizontal dentro de su caja, nunca de la página
+// Tabla responsive: en celular cada fila es una tarjeta (nada queda escondido a la derecha);
+// desde tablet es una tabla con scroll horizontal dentro de su caja, nunca de la página.
 export function Tabla({ columnas, filas, alTocarFila, vacio = 'No hay datos para mostrar.', iconoVacio, claveFila = (f, i) => f.id ?? i, pie }) {
   if (!filas?.length) return <Vacio icono={iconoVacio}>{vacio}</Vacio>;
   return (
-    <div className="scroll-fino overflow-x-auto rounded-2xl bg-superficie shadow-suave ring-1 ring-borde">
+    <>
+      <TarjetasTabla columnas={columnas} filas={filas} alTocarFila={alTocarFila} claveFila={claveFila} pie={pie} />
+      <TablaAncha columnas={columnas} filas={filas} alTocarFila={alTocarFila} claveFila={claveFila} pie={pie} />
+    </>
+  );
+}
+
+function TarjetasTabla({ columnas, filas, alTocarFila, claveFila, pie }) {
+  // El título de la tarjeta es la columna marcada `principal` (o la primera con título); las columnas sin título
+  // (favorito, estado, "ver") van en la misma línea; el resto se lista como "etiqueta: valor".
+  const marcada = columnas.findIndex((c) => c.principal);
+  const iPrincipal = marcada >= 0 ? marcada : columnas.findIndex((c) => c.titulo);
+  const principal = columnas[iPrincipal];
+  const antes = columnas.slice(0, iPrincipal).filter((c) => !c.titulo);
+  const despues = columnas.slice(iPrincipal + 1).filter((c) => !c.titulo);
+  const datos = columnas.filter((c, i) => c.titulo && i !== iPrincipal);
+  return (
+    <ul className="space-y-2.5 sm:hidden">
+      {filas.map((f, i) => (
+        <li
+          key={claveFila(f, i)}
+          onClick={alTocarFila ? () => alTocarFila(f) : undefined}
+          onKeyDown={alTocarFila ? (e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), alTocarFila(f)) : undefined}
+          tabIndex={alTocarFila ? 0 : undefined}
+          role={alTocarFila ? 'button' : undefined}
+          className={`rounded-2xl bg-superficie p-4 shadow-suave ring-1 ring-borde ${alTocarFila ? 'cursor-pointer transition-colors active:bg-primario-suave/60 focus-visible:ring-4 focus-visible:ring-anillo focus-visible:outline-none' : ''}`}
+        >
+          <div className="flex items-center gap-2">
+            {antes.map((c) => (
+              <div key={c.clave} className="shrink-0">{c.render ? c.render(f) : f[c.clave]}</div>
+            ))}
+            <div className="min-w-0 flex-1 text-[17px] text-texto">{principal.render ? principal.render(f) : f[principal.clave]}</div>
+            {despues.map((c) => (
+              <div key={c.clave} className="shrink-0 empty:hidden">{c.render ? c.render(f) : f[c.clave]}</div>
+            ))}
+          </div>
+          {datos.length > 0 && (
+            <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2.5 border-t border-borde pt-3">
+              {datos.map((c) => (
+                <div key={c.clave} className="min-w-0 has-[dd:empty]:hidden">
+                  <dt className="text-xs font-semibold uppercase tracking-wide text-texto-suave">{c.titulo}</dt>
+                  <dd className={`mt-0.5 break-words text-[15px] text-texto ${c.derecha ? 'tabular-nums' : ''}`}>{c.render ? c.render(f) : f[c.clave]}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+        </li>
+      ))}
+      {pie && (
+        <li className="rounded-2xl bg-superficie-2 p-4 ring-1 ring-borde-fuerte">
+          <div className="text-[17px] font-bold text-texto">{pie[principal.clave] ?? 'Total'}</div>
+          <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-2">
+            {datos
+              .filter((c) => pie[c.clave] != null && pie[c.clave] !== '')
+              .map((c) => (
+                <div key={c.clave}>
+                  <dt className="text-xs font-semibold uppercase tracking-wide text-texto-suave">{c.titulo}</dt>
+                  <dd className="mt-0.5 font-bold tabular-nums text-texto">{pie[c.clave]}</dd>
+                </div>
+              ))}
+          </dl>
+        </li>
+      )}
+    </ul>
+  );
+}
+
+function TablaAncha({ columnas, filas, alTocarFila, claveFila, pie }) {
+  return (
+    <div className="scroll-fino hidden overflow-x-auto rounded-2xl bg-superficie shadow-suave ring-1 ring-borde sm:block">
       <table className="w-full min-w-max text-left text-[15px]">
         <thead>
           <tr className="border-b border-borde bg-superficie-2/60">
