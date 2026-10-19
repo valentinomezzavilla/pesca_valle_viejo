@@ -83,7 +83,7 @@ export async function datosDetalleDeuda(clienteId) {
 
 async function negocio() {
   const config = await configuracion.obtenerTodo();
-  return config.negocio?.nombre || 'Pescadería';
+  return config.negocio?.nombre || 'Pescadería Valle Viejo';
 }
 
 const datosCliente = (c) => `Cliente: ${c.nombre}${c.documento ? ` · Doc. ${c.documento}` : ''}`;

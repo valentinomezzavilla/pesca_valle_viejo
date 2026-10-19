@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CircleAlert, Fish, KeyRound, UserRound } from 'lucide-react';
+import { CircleAlert, KeyRound, UserRound } from 'lucide-react';
 import { useSesion } from '../contexto/Sesion.jsx';
 import { Boton } from '../componentes/Boton.jsx';
 import { Campo } from '../componentes/Formulario.jsx';
@@ -33,10 +33,8 @@ export function Login() {
 
       <div className="relative w-full max-w-sm animate-entrar">
         <div className="mb-6 flex flex-col items-center text-center text-white">
-          <span className="flex size-16 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/20">
-            <Fish size={34} aria-hidden />
-          </span>
-          <h1 className="mt-4 text-2xl font-bold tracking-tight">¡Hola!</h1>
+          <img src="/logo-512.png" alt="Pescadería Valle Viejo" className="size-36 rounded-full shadow-alta ring-4 ring-white/15" />
+          <h1 className="mt-5 text-2xl font-bold tracking-tight">¡Hola!</h1>
           <p className="mt-1 text-lateral-texto">Ingresá con tu usuario para empezar</p>
         </div>
 

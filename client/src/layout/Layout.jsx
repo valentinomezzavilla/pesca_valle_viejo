@@ -3,7 +3,7 @@ import { NavLink, Outlet, useLocation } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import * as Dialog from '@radix-ui/react-dialog';
 import {
-  BarChart3, BookUser, Boxes, ClipboardList, Fish, House, LogOut, Menu, Monitor, Moon, PackagePlus, Receipt, Settings, ShoppingCart, Sun, Tags, Trash2, Truck, Users, Wallet, X,
+  BarChart3, BookUser, Boxes, ClipboardList, House, LogOut, Menu, Monitor, Moon, PackagePlus, Receipt, Settings, ShoppingCart, Sun, Tags, Trash2, Truck, Users, Wallet, X,
 } from 'lucide-react';
 import { ROLES_ETIQUETA } from '@pescaderia/shared';
 import { get } from '../api/cliente.js';
@@ -58,7 +58,7 @@ export function Layout() {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const { pathname } = useLocation();
   const config = useQuery({ queryKey: ['configuracion'], queryFn: () => get('/configuracion'), staleTime: 5 * 60_000 });
-  const nombreNegocio = config.data?.negocio?.nombre ?? 'Pescadería';
+  const nombreNegocio = config.data?.negocio?.nombre ?? 'Pescadería Valle Viejo';
   const alertas = useQuery({ queryKey: ['alertas'], queryFn: () => get('/stock/alertas'), enabled: puede('stock.ver'), refetchInterval: 5 * 60_000 });
   const cantidadAlertas = alertas.data?.total ?? 0;
   const IconoTema = ICONO_TEMA[tema];
@@ -69,9 +69,7 @@ export function Layout() {
   const contenidoMenu = (
     <>
       <div className="flex items-center gap-3 px-5 pb-4 pt-5">
-        <span className="flex size-10 items-center justify-center rounded-xl bg-white/10 text-white ring-1 ring-white/15">
-          <Fish size={22} aria-hidden />
-        </span>
+        <img src="/logo-512.png" alt="" className="size-12 shrink-0 rounded-full ring-2 ring-white/20" />
         <div className="min-w-0">
           <div className="truncate font-bold leading-tight text-white">{nombreNegocio}</div>
           <div className="text-xs text-lateral-texto">Sistema de gestión</div>
@@ -148,7 +146,7 @@ export function Layout() {
         <button type="button" onClick={() => setMenuAbierto(true)} className="flex size-11 items-center justify-center rounded-xl hover:bg-lateral-hover" aria-label="Abrir menú">
           <Menu size={24} />
         </button>
-        <Fish size={20} className="text-lateral-texto" aria-hidden />
+        <img src="/logo-64.png" alt="" className="size-8 shrink-0 rounded-full" />
         <span className="truncate font-semibold">{nombreNegocio}</span>
         <span className="ml-auto flex size-9 items-center justify-center rounded-full bg-primario text-xs font-bold text-sobre-primario" title={usuario.nombre}>
           {iniciales(usuario.nombre)}

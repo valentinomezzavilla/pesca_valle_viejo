@@ -1,4 +1,4 @@
-# Pescadería — Diseño técnico
+# Pescadería Valle Viejo — Diseño técnico
 
 SQL completo: [`server/src/db/sql/001_esquema_inicial.sql`](../server/src/db/sql/001_esquema_inicial.sql), aplicado por la primera migración de Knex. Las migraciones siguientes van en `server/src/db/migraciones/`.
 

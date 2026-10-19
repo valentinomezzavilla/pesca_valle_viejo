@@ -1,4 +1,4 @@
-# 🐟 Pescadería — Sistema de gestión
+# 🐟 Pescadería Valle Viejo — Sistema de gestión
 
 Punto de venta, stock por lotes (FIFO), ingreso de mercadería, proveedores y caja para una pescadería.
 Node.js + Express + PostgreSQL · React + Vite + Tailwind · Knex (migraciones).

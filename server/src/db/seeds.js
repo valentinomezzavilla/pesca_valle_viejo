@@ -3,7 +3,7 @@ import { env } from '../config/env.js';
 import { logger } from '../config/logger.js';
 
 export const CONFIGURACION_INICIAL = {
-  negocio: { nombre: 'Pescadería', direccion: '', telefono: '', cuit: '', mensaje_ticket: '¡Gracias por su compra!' },
+  negocio: { nombre: 'Pescadería Valle Viejo', direccion: '', telefono: '', cuit: '', mensaje_ticket: '¡Gracias por su compra!' },
   ticket_ancho: '80',
   punto_venta: 1,
   descuento_max_cajero: 10,

@@ -51,7 +51,7 @@ export async function exportar(ctx, id, filtros, formato) {
   const r = await ejecutar(id, filtros);
   const config = await configuracion.obtenerTodo();
   const datos = {
-    negocio: config.negocio?.nombre || 'Pescadería',
+    negocio: config.negocio?.nombre || 'Pescadería Valle Viejo',
     titulo: r.titulo,
     subtitulo: r.periodo ? (r.periodo.desde === r.periodo.hasta ? `Día ${fechaCorta(r.periodo.desde)}` : `Del ${fechaCorta(r.periodo.desde)} al ${fechaCorta(r.periodo.hasta)}`) : `Situación al ${fechaCorta(hoy())}`,
     columnas: r.columnas,

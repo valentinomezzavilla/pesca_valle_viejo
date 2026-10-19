@@ -47,7 +47,7 @@ export async function datosResumen(proveedorId, { desde, hasta }) {
 export async function resumenPdf(proveedorId, filtros) {
   const datos = await datosResumen(proveedorId, filtros);
   const config = await configuracion.obtenerTodo();
-  const negocio = config.negocio?.nombre || 'Pescadería';
+  const negocio = config.negocio?.nombre || 'Pescadería Valle Viejo';
   const p = datos.proveedor;
 
   const buffer = await crearPdf({ titulo: `Resumen de cuenta — ${p.nombre}`, autor: negocio }, (doc) => {
