@@ -42,7 +42,7 @@ export function Inicio() {
 
   return (
     <div className="mx-auto max-w-6xl">
-      <Encabezado titulo={`Hola, ${usuario.nombre.split(' ')[0]}`} icono={Home} subtitulo={<span className="capitalize">{nombreDia}</span>}>
+      <Encabezado titulo={`Hola, ${usuario.nombre.split(' ')[0]}`} icono={Home} subtitulo={<span className="first-letter:uppercase inline-block">{nombreDia}</span>}>
         <Link to="/vender" className={clasesBoton({ tamanio: 'normal' })}><ShoppingCart size={18} aria-hidden /> Vender</Link>
         <Link to="/mercaderia/nuevo" className={clasesBoton({ variante: 'secundario' })}><PackagePlus size={18} aria-hidden /> Ingresar mercadería</Link>
       </Encabezado>
