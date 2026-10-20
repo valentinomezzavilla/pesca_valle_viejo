@@ -210,7 +210,8 @@
     background: white !important;
     color: black !important;
   }
-  #root {
+  /* Todo menos el ticket: #root y también los modales y avisos, que se montan sueltos en <body> */
+  body > *:not(#area-impresion) {
     display: none !important;
   }
   #area-impresion {
